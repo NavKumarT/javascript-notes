@@ -1,0 +1,50 @@
+Chapter 3: Functions – The Building Blocks of Programs
+
+--------------------------------------------------------------------------------
+1. Three Ways to Define a Function
+There is no single way to define a function; each style has its own behavior, particularly regarding hoisting and bindings.
+• Function Expressions: A function is created as a value and assigned to a binding.
+• Function Declarations: The function keyword is used at the start of a statement.
+    ◦ Gotcha: Hoisting. These are not part of the regular top-to-bottom flow. They are moved to the top of their scope, meaning they can be called before they are defined in the code.
+• Arrow Functions: Introduced in 2015 to write small expressions more concisely.
+    ◦ Shorthand Rules: If there is only one parameter, parentheses can be omitted. If the body is a single expression, braces and the return keyword are implicit.
+
+--------------------------------------------------------------------------------
+2. Scopes and Lexical Visibility
+Each binding has a scope, which is the part of the program where it is visible.
+• Global Scope: Bindings defined outside any function or block.
+• Local Scope: Bindings created for parameters or declared inside a function.
+• Block Scope (let & const): Local to the specific block (e.g., inside an if or a for loop).
+• Gotcha: The var Keyword. Bindings created with var are visible throughout the entire function they appear in, or the global scope if not in a function. They do not respect block boundaries.
+• Lexical Scoping: JavaScript uses the "outward-looking" rule. A block can see into the scopes around it, but the outside cannot see "into" an internal scope.
+
+--------------------------------------------------------------------------------
+3. The Call Stack and Recursion
+When a function is called, the computer must remember the "context" it jumped from. It stores this in the call stack.
+• Blowing the Stack: Storing the stack requires memory. If a function calls itself too many times (infinite recursion), the computer fails with a "stack overflow" error.
+• Recursive Thinking: A function that calls itself is recursive. It is often more elegant than loops for problems involving "branching" (like finding a specific path through a set of numbers).
+• Gotcha: Efficiency. In standard JavaScript, a recursive version of a function is often significantly slower (e.g., three times slower) than a version using a for loop.
+
+--------------------------------------------------------------------------------
+4. The "Broad-Minded" Parameter System
+JavaScript is famously liberal with how it handles arguments passed to functions.
+• Extra Arguments: If you pass more arguments than defined, JavaScript simply ignores the extras.
+• Missing Arguments: If you pass fewer, the missing parameters are assigned the value undefined.
+• Default Values: You can assign a default value using the = operator in the parameter list. This value is used if the argument is missing or explicitly passed as undefined.
+
+--------------------------------------------------------------------------------
+5. Closure: The Function's Memory
+A function that references bindings from local scopes around it is a closure.
+• Key Concept: Function values contain both their code and the environment in which they were created. When called, the function body sees the environment it was born in, not the environment where it is called.
+• Example: The Multiplier.
+• Here, twice "remembers" that its factor was 2 even after multiplier has finished executing.
+
+--------------------------------------------------------------------------------
+6. Growing Functions: Strategy and Purity
+How should functions be added to a program?
+• Principles of Growth: You usually introduce functions when you notice repeated code or when you identify a new concept that deserves its own name.
+• The "Cleverness" Gotcha: Resist the urge to write overly general "frameworks" for functionality unless you are sure you need them. It leads to unused, complex code.
+• Pure Functions: A pure function has no side effects and doesn't rely on global bindings that might change. For the same input, it always produces the same output. Pure functions are easier to test and combine than non-pure ones.
+
+--------------------------------------------------------------------------------
+Analogy for Closure: Imagine a function is like a photograph. It doesn't just capture the person (the code), it also captures the entire background (the environment) at the moment the shutter was pressed. No matter where you take that photo later, the background remains the same.

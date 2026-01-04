@@ -1,0 +1,78 @@
+Deep Copy in JavaScript — Condensed Interview Notes
+
+1️⃣ JSON.parse(JSON.stringify(obj))
+	const copy = JSON.parse(JSON.stringify(obj))
+	How it works
+	Converts object → JSON string → new object (breaks references)
+
+	Works for
+	Plain JSON-safe data (numbers, strings, arrays, objects)
+
+	Fails for
+	Date (becomes string)
+	Map, Set
+	undefined, functions, symbols (dropped)
+	Circular references (throws error)
+
+	Pros
+	Very simple
+	No dependencies
+
+	Cons
+	Data loss
+	Slow for large objects
+	Unsafe for real-world complex data
+
+	Use when
+	API responses / simple data only
+
+2️⃣ structuredClone(obj) (Modern Native)
+	const copy = structuredClone(obj);
+	What it is
+	Built-in deep cloning algorithm (HTML spec)
+
+	Supports
+	Date, Map, Set
+	Circular references
+	Undefined
+
+	Does NOT support
+		Functions, DOM nodes
+
+	Pros
+	Native, fast
+	No data loss for supported types
+	Handles circular refs
+
+	Cons
+	No function cloning
+	Not supported in very old browsers
+
+	Use when
+	Modern frontend apps (best default choice)
+
+3️⃣ _.cloneDeep(obj) (Lodash)
+	const copy = _.cloneDeep(obj);
+	What it is
+	Library-based deep copy utility
+
+	Supports
+	Functions
+	Circular references
+	Complex nested structures
+
+	Pros
+	Most robust
+	Handles edge cases
+
+	Cons
+	Extra dependency
+	Larger bundle
+	Slower than native for simple objects
+
+	Use when
+	Complex or legacy objects
+
+	Interview One-liner
+	“Use structuredClone by default, JSON stringify only for plain data, and _.cloneDeep for complex legacy objects.”
+

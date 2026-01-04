@@ -1,0 +1,72 @@
+Chapter 2: Program Structure
+This chapter moves beyond individual "nouns" and "sentence fragments" of JavaScript into the "meaningful prose" of actual programming.
+
+--------------------------------------------------------------------------------
+1. Expressions and Statements
+• Expression: A fragment of code that produces a value is an expression. This includes literal values (like 22), values wrapped in parentheses, or operators applied to values.
+• Statement: If an expression is a sentence fragment, a statement is a full sentence. A program is essentially a list of statements.
+• The Semicolon Rule: Most statements end with a semicolon (;). While JavaScript sometimes allows you to omit them, the rules for when this is safe are complex and error-prone; the best practice is to always include them.
+• Side Effects: A statement must affect the world to be useful, such as displaying something on a screen or changing the internal state of the machine. These changes are called side effects.
+
+--------------------------------------------------------------------------------
+2. Bindings (Variables)
+• The Tentacle Analogy: You should imagine bindings not as boxes that contain values, but as tentacles that grasp them. Two bindings can refer to the same value, and a program can only access values it still has a reference to.
+• Definition: Use the keyword let to define a binding.
+• Reassignment: The = operator can be used at any time to reattach a tentacle to a new value.
+• const vs. var:
+    ◦ const (Constant): Points at the same value for its entire life and cannot be reassigned.
+    ◦ var (Variable): The pre-2015 way of declaring bindings. It behaves oddly in certain situations and is rarely used in modern JavaScript.
+• Binding Names:
+    ◦ Names cannot start with a digit.
+    ◦ They can include dollar signs ($) or underscores (_) but no other punctuation.
+    ◦ Keywords Gotcha: You cannot use reserved keywords (like if, while, break) as binding names.
+
+--------------------------------------------------------------------------------
+3. The Environment
+• The collection of bindings and their values existing at a given time is the environment.
+• It is never empty; it always contains bindings that are part of the language standard (like Math or JSON) and bindings provided by the platform (like prompt in a browser).
+
+--------------------------------------------------------------------------------
+4. Functions
+• Definition: A function is a piece of program wrapped in a value.
+• Invocation: To run a function, you invoke, call, or apply it by putting parentheses after the expression that produces the function value.
+• Arguments: Values passed into a function are arguments.
+• Return Values: Functions can produce side effects (like console.log) or return a value to be used in larger expressions.
+
+--------------------------------------------------------------------------------
+5. Control Flow
+• Straight-Line Flow: By default, statements are executed from top to bottom.
+• Conditional Execution (if): Code is executed only if a specific condition holds true.
+    ◦ else: Provides an alternative path when the if condition is false.
+    ◦ Number.isNaN: A useful function to check if a value resulted in NaN during conversion.
+• Loops:
+    ◦ while: Repeatedly executes a block as long as the condition remains true.
+    ◦ do loop Gotcha: It always executes its body at least once because it checks the condition after the first execution.
+    ◦ for loop: A concise way to group the loop state (initialization, check, and update).
+• Breaking Out:
+    ◦ break: Immediately jumps out of the enclosing loop.
+    ◦ continue: Jumps out of the current iteration and continues with the next one.
+
+
+--------------------------------------------------------------------------------
+6. Updating Bindings Succinctly
+JavaScript provides shortcuts for updating a binding based on its previous value:
+• counter += 1; (Same as counter = counter + 1)
+• counter++; (Increment by 1)
+• counter--; (Decrement by 1)
+
+--------------------------------------------------------------------------------
+7. Dispatching with switch
+• Intended to handle multiple "branches" more directly than a long chain of if/else statements.
+• Fall-through Gotcha: If you forget a break statement at the end of a case, the program will continue executing the next case regardless of whether it matches.
+
+--------------------------------------------------------------------------------
+8. Formatting and Styling
+• Indentation: While the computer doesn't care about spaces, they are vital for humans to see the visual shape of code blocks.
+• Capitalization: JavaScript conventions favor camelCase (e.g., fuzzyLittleTurtle), where every word except the first is capitalized.
+• Comments:
+    ◦ // for single-line comments.
+    ◦ /* */ for multi-line or block comments.
+
+--------------------------------------------------------------------------------
+Analogy for Control Flow: Think of Straight-Line Flow as a single road. Conditional Execution (if) is a fork in the road where you choose a path based on a condition. Loops are circular tracks where you drive around until a certain condition is met to exit.

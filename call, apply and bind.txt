@@ -1,0 +1,604 @@
+==================================================
+CALL, APPLY, BIND — DEEP CONCEPTUAL NOTES
+
+WHY call / apply / bind EXIST
+
+In JavaScript, this is NOT bound at function definition time.
+It is determined at call time (except arrow functions).
+
+call / apply / bind allow you to:
+
+Explicitly control the value of this
+
+Borrow methods from other objects
+
+Reuse functions across contexts
+
+Fix this permanently (bind)
+
+They are methods on Function.prototype.
+
+Syntax availability:
+Any function can use them:
+fn.call(...)
+fn.apply(...)
+fn.bind(...)
+
+call()
+
+Purpose:
+Invokes a function immediately with a specified this and arguments passed individually.
+
+Syntax:
+fn.call(thisArg, arg1, arg2, ...)
+
+Example:
+function greet(msg) {
+return msg + ", " + this.name;
+}
+
+const user = { name: "Naveen" };
+greet.call(user, "Hello");
+
+Key properties:
+
+Executes immediately
+
+Arguments passed individually
+
+Returns the function’s return value
+
+apply()
+
+Purpose:
+Same as call, but arguments are passed as an array (or array-like).
+
+Syntax:
+fn.apply(thisArg, [arg1, arg2, ...])
+
+Example:
+greet.apply(user, ["Hello"]);
+
+When to use:
+
+When arguments are already in an array
+
+Spread operator not available (older JS)
+
+Variadic or dynamic argument lists
+
+Important:
+call and apply are semantically identical except argument passing.
+
+bind()
+
+Purpose:
+Returns a NEW function with permanently bound this.
+
+Syntax:
+const boundFn = fn.bind(thisArg, arg1, arg2, ...);
+
+Example:
+const boundGreet = greet.bind(user);
+boundGreet("Hello");
+
+Key properties:
+
+Does NOT execute immediately
+
+Returns a new function
+
+this is permanently fixed
+
+Supports partial application (currying)
+
+PARTIAL APPLICATION (bind feature)
+
+bind can pre-fill arguments.
+
+Example:
+function add(a, b) {
+return a + b;
+}
+
+const add5 = add.bind(null, 5);
+add5(3); // 8
+
+Note:
+this can be null if unused.
+
+call vs apply vs bind (INTERVIEW TABLE)
+
+call:
+
+Executes immediately
+
+Args passed individually
+
+Use when args are known
+
+apply:
+
+Executes immediately
+
+Args passed as array
+
+Use when args are dynamic
+
+bind:
+
+Returns new function
+
+Does not execute immediately
+
+Use for callbacks, event handlers, async code
+
+this BEHAVIOR GOTCHAS
+
+GOTCHA 1: Default binding
+In non-strict mode:
+this defaults to global object (window / global)
+
+In strict mode:
+this is undefined
+
+call/apply/bind override default binding.
+
+GOTCHA 2: Arrow functions
+Arrow functions do NOT have their own this.
+
+call/apply/bind DO NOT work on arrow functions.
+
+Example:
+const fn = () => this;
+fn.call(obj); // still lexical this, ignored
+
+GOTCHA 3: bind is permanent
+Once bound, this cannot be changed.
+
+Example:
+const bound = fn.bind(obj1);
+bound.call(obj2); // still obj1
+
+GOTCHA 4: bind + new
+new has higher priority than bind.
+
+Example:
+function Person(name) {
+this.name = name;
+}
+
+const BoundPerson = Person.bind({ ignored: true });
+const p = new BoundPerson("Naveen");
+
+Result:
+p.name === "Naveen"
+Bound object is ignored.
+
+Rule:
+new > bind > call/apply > default
+
+METHOD BORROWING
+
+Using call/apply to use another object’s method.
+
+Example:
+const person = {
+fullName() {
+return this.first + " " + this.last;
+}
+};
+
+const user = { first: "Naveen", last: "Kumar" };
+person.fullName.call(user);
+
+ARRAY-LIKE OBJECTS
+
+apply is commonly used for array-like objects.
+
+Example:
+Math.max.apply(null, [1, 2, 3]);
+
+Modern equivalent:
+Math.max(...[1, 2, 3]);
+
+FUNCTION BORROWING FROM PROTOTYPE
+
+Example:
+Array.prototype.slice.call(arguments);
+
+Used before spread/rest syntax existed.
+
+REAL-WORLD USE CASES
+
+Event handlers
+
+setTimeout / setInterval
+
+React class components (bind this)
+
+Debounce / throttle
+
+Method reuse across objects
+
+Currying / partial application
+
+INTERVIEW TRICK QUESTIONS
+
+Q1: Does bind modify the original function?
+Answer: No, it returns a new function.
+
+Q2: Can you rebind a bound function?
+Answer: No.
+
+Q3: Does call/apply work on arrow functions?
+Answer: No.
+
+Q4: Which has higher priority: bind or new?
+Answer: new.
+
+Q5: What happens if thisArg is null or undefined?
+Answer:
+
+Non-strict: defaults to global object
+
+Strict: remains undefined
+
+Q6: Are call/apply faster than bind?
+Answer:
+call/apply invoke immediately.
+bind adds an extra function layer.
+
+POLYFILL-LEVEL UNDERSTANDING
+
+bind internally:
+
+Stores original function
+
+Stores bound this
+
+Returns wrapper function
+
+Wrapper merges arguments
+
+Handles new keyword edge case
+
+ONE-LINE INTERVIEW SUMMARY
+
+call/apply invoke a function immediately with explicit this.
+bind creates a new function with permanently fixed this.
+
+COMMON MISTAKES
+
+Using bind inside render repeatedly (performance issue)
+
+Expecting call/apply to work on arrow functions
+
+Forgetting bind returns a function
+
+Losing this in callbacks
+
+FINAL GOLDEN RULE
+
+In JavaScript:
+this is NOT where a function is defined.
+this is determined by HOW a function is called.
+
+call / apply / bind exist to control that rule.
+
+==================================================
+
+==================================================
+CALL / APPLY / BIND — ADVANCED INTERVIEW NOTES
+==================================================
+PART 1: POLYFILLS (DEEP UNDERSTANDING)
+
+POLYFILL FOR call()
+
+CONCEPT:
+
+Temporarily attach the function to the object
+
+Invoke it so this points to that object
+
+Remove the temporary property
+
+POLYFILL:
+Function.prototype.myCall = function (context, ...args) {
+if (context === null || context === undefined) {
+context = globalThis;
+}
+
+const fnSymbol = Symbol(); // avoid collisions
+context[fnSymbol] = this;
+
+const result = contextfnSymbol
+;
+delete context[fnSymbol];
+
+return result;
+};
+
+KEY INTERVIEW NOTES:
+
+this refers to the function being called
+
+Symbol prevents overwriting existing properties
+
+globalThis handles browser + Node environments
+
+POLYFILL FOR apply()
+
+Only difference from call():
+Arguments are passed as an array.
+
+POLYFILL:
+Function.prototype.myApply = function (context, argsArray) {
+if (context === null || context === undefined) {
+context = globalThis;
+}
+
+const fnSymbol = Symbol();
+context[fnSymbol] = this;
+
+const result = context[fnSymbol](...(argsArray || []));
+delete context[fnSymbol];
+
+return result;
+};
+
+INTERVIEW INSIGHT:
+
+call and apply share the SAME internal logic
+
+apply is syntactic sugar for array arguments
+
+POLYFILL FOR bind() (MOST IMPORTANT)
+
+CONCEPT:
+bind must:
+
+Return a new function
+
+Preserve this
+
+Support partial arguments
+
+Work correctly with new
+
+POLYFILL:
+Function.prototype.myBind = function (context, ...bindArgs) {
+const originalFn = this;
+
+return function (...callArgs) {
+// if called with new
+if (this instanceof originalFn) {
+return new originalFn(...bindArgs, ...callArgs);
+}
+return originalFn.apply(context, [...bindArgs, ...callArgs]);
+};
+};
+
+INTERVIEW GOLD:
+
+bind must respect constructor usage
+
+new has higher priority than bind
+
+this is why bind polyfills are harder
+
+==================================================
+PART 2: TRICKY OUTPUT-BASED INTERVIEW QUESTIONS
+Q1. call vs bind
+
+function sayHi() {
+console.log(this.name);
+}
+
+const user = { name: "Naveen" };
+
+const fn = sayHi.bind(user);
+fn.call({ name: "Other" });
+
+OUTPUT:
+Naveen
+
+WHY:
+bind permanently fixes this
+call cannot override it
+
+Q2. Arrow function trap
+
+const user = {
+name: "Naveen",
+greet: () => {
+console.log(this.name);
+}
+};
+
+user.greet.call({ name: "Test" });
+
+OUTPUT:
+undefined
+
+WHY:
+Arrow functions ignore call/apply/bind
+They capture lexical this
+
+Q3. bind + new
+
+function Person(name) {
+this.name = name;
+}
+
+const Bound = Person.bind({ name: "Ignored" });
+const p = new Bound("Naveen");
+
+OUTPUT:
+Person { name: "Naveen" }
+
+WHY:
+new > bind > call/apply
+
+Q4. Lost this
+
+const user = {
+name: "Naveen",
+greet() {
+console.log(this.name);
+}
+};
+
+const fn = user.greet;
+fn();
+
+OUTPUT:
+undefined (strict mode)
+
+WHY:
+Function loses object reference
+Default binding applies
+
+Q5. setTimeout binding
+
+const user = {
+name: "Naveen",
+greet() {
+setTimeout(function () {
+console.log(this.name);
+}, 0);
+}
+};
+
+user.greet();
+
+OUTPUT:
+undefined
+
+FIX:
+Use bind / arrow function
+
+Q6. Partial bind confusion
+
+function add(a, b) {
+return a + b;
+}
+
+const fn = add.bind(null, 2);
+console.log(fn(3, 4));
+
+OUTPUT:
+5
+
+WHY:
+bind pre-fills arguments
+Extra arguments are ignored
+
+==================================================
+PART 3: REACT-SPECIFIC this PITFALLS
+
+CLASS COMPONENT EVENT HANDLERS
+
+Problem:
+this becomes undefined in callbacks
+
+class Button extends React.Component {
+handleClick() {
+console.log(this);
+}
+
+render() {
+return <button onClick={this.handleClick}>Click</button>;
+}
+}
+
+WHY:
+Method passed as reference
+React does not auto-bind
+
+SOLUTIONS IN REACT
+
+OPTION 1: bind in constructor (BEST PRACTICE)
+constructor() {
+super();
+this.handleClick = this.handleClick.bind(this);
+}
+
+OPTION 2: arrow method (class fields)
+handleClick = () => {
+console.log(this);
+};
+
+WHY THIS WORKS:
+Arrow function captures lexical this
+
+PERFORMANCE PITFALL
+
+WRONG:
+<button onClick={this.handleClick.bind(this)} />
+
+WHY BAD:
+
+New function created every render
+
+Breaks PureComponent / memo
+
+Causes unnecessary re-renders
+
+FUNCTION COMPONENTS
+
+No this exists.
+
+Hooks replace this entirely:
+useState
+useEffect
+useRef
+
+Attempting bind/call here is meaningless.
+
+setState + this
+
+class Counter extends React.Component {
+increment() {
+this.setState({ count: this.state.count + 1 });
+}
+}
+
+If increment is unbound → runtime error
+
+INTERVIEW REACT QUESTION
+
+Q: Why don’t function components need bind?
+A:
+They do not use this. State and lifecycle are managed via hooks.
+
+==================================================
+FINAL INTERVIEW SUMMARY (MEMORIZE)
+
+call / apply:
+
+Immediate invocation
+
+Temporary this binding
+
+bind:
+
+Returns new function
+
+Permanent this
+
+Required for callbacks and async
+
+Arrow functions:
+
+Ignore call/apply/bind
+
+Capture lexical this
+
+React:
+
+Class components require binding
+
+Function components avoid this entirely
+
+==================================================

@@ -1,0 +1,35 @@
+Chapter 5: Higher-Order Functions
+This chapter focuses on abstraction—the ability to hide detail and talk about problems at a higher level to manage the complexity and bugs inherent in large programs.
+
+--------------------------------------------------------------------------------
+1. Defining Higher-Order Functions
+Functions that operate on other functions, either by taking them as arguments or by returning them, are called higher-order functions. They allow us to abstract over actions, not just values.
+• Functions that create new functions:
+• Functions that change other functions:
+
+--------------------------------------------------------------------------------
+2. Standard Array Higher-Order Methods
+JavaScript provides several built-in higher-order methods for data processing that are essential for interviews.
+• forEach: Provides a functional way to perform a "for/of" loop.
+• filter: Returns a new array containing only the elements that pass a predicate test. It is a pure function that does not modify the original array.
+• map: Transforms an array by applying a function to all elements and building a new array of the same length.
+• reduce (Fold): Combines all elements in an array into a single value by repeatedly applying a combining function.
+    ◦ The reduce Gotcha: If your array contains at least one element, you can omit the start argument; the method will take the first element as the start and begin reducing from the second element.
+• some: A higher-order function that returns true if any element in the array matches the given predicate.
+• find: Goes over elements and returns the first one for which a function returns true, or undefined if none match.
+
+--------------------------------------------------------------------------------
+3. Composability and Pipelines
+The real power of these functions is realized through composability—layering operations to create a data "pipeline".
+• Example Pipeline: SCRIPTS.filter(s => s.living).map(s => s.year) allows you to filter a dataset and transform it in a single, readable flow.
+• The Efficiency Gotcha: While readable, composed pipelines build up intermediate arrays (one for filter, one for map). In cases of massive arrays processed many times over, a single high-performance loop may be faster, though usually less readable.
+
+--------------------------------------------------------------------------------
+4. Strings and Character Codes (The UTF-16 Gotcha)
+A common source of bugs in JavaScript involves how strings handle Unicode.
+• Code Units vs. Code Points: JavaScript strings are encoded as a sequence of 16-bit code units (UTF-16). While common characters fit in one unit, many others (like emojis) take up two units.
+• The length Gotcha: The .length property and square bracket access (string[i]) only count code units, not real characters.
+• The Interview Solution: To iterate over real characters, always use a for/of loop, which was designed to handle two-unit characters correctly. To get the actual Unicode code, use the codePointAt(0) method instead of charCodeAt.
+
+--------------------------------------------------------------------------------
+Analogy for Abstraction: Think of a recipe for pea soup. A low-level recipe tells you to "Put 1 cup of peas in water... leave for 12 hours... cut an onion with a knife". A high-level, abstracted recipe simply says, "Soak peas... simmer... chop and add vegetables". Abstraction allows you to use "cooking-related words" (functions) so you don't have to explain every individual knife stroke.

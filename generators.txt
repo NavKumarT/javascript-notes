@@ -1,0 +1,213 @@
+🔹 What is a Generator in JavaScript?
+
+A generator is a special function that can pause execution and resume later, producing multiple values over time instead of returning once.
+
+Defined using function*
+
+Uses yield to pause
+
+Returns an iterator
+
+function* gen() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+🔹 How is a Generator different from a normal function?
+Normal Function	Generator Function
+Executes fully	Pauses & resumes
+Single return	Multiple yields
+No state retention	Retains execution state
+Not iterable	Iterable
+🔹 What does calling a generator return?
+
+Calling a generator does not execute it.
+It returns a generator object (iterator).
+
+const g = gen();
+
+
+Execution starts only when .next() is called.
+
+🔹 How does .next() work?
+g.next(); // { value: 1, done: false }
+g.next(); // { value: 2, done: false }
+g.next(); // { value: 3, done: false }
+g.next(); // { value: undefined, done: true }
+
+
+Each .next():
+
+Resumes execution
+
+Runs until next yield
+
+Returns { value, done }
+
+🔹 yield vs return
+yield	return
+Pauses execution	Ends generator
+Can be called multiple times	Only once
+Resumable	Not resumable
+🔹 Generators are Iterables
+
+Generators implement:
+
+Symbol.iterator
+
+next()
+
+So they work with:
+
+for (const v of gen()) {
+  console.log(v);
+}
+
+🔹 Passing values INTO generators
+function* gen() {
+  const x = yield 1;
+  const y = yield x + 1;
+  return y;
+}
+
+const g = gen();
+g.next();      // yield 1
+g.next(10);    // x = 10 → yield 11
+g.next(20);    // return 20
+
+
+⚠️ First .next(value) value is ignored.
+
+🔹 yield* (delegation)
+function* inner() {
+  yield 2;
+  yield 3;
+}
+
+function* outer() {
+  yield 1;
+  yield* inner();
+  yield 4;
+}
+
+
+Output → 1,2,3,4
+
+✔ Used to compose generators.
+
+🔹 Generator + async (important interview topic)
+❌ Generators are NOT async
+
+They pause synchronously
+
+They don’t handle promises automatically
+
+✅ Async generators
+async function* gen() {
+  yield await fetchData();
+}
+
+
+Consumed using:
+
+for await (const v of gen()) {}
+
+🔹 Generators vs Async/Await (INTERVIEW)
+Generator	Async/Await
+Manual control	Automatic flow
+Pull-based	Push-based
+Can yield non-promises	Always promise
+Lower-level	Higher-level
+
+👉 async/await internally builds on generator-like concepts.
+
+🔹 Real-world use cases (INTERVIEW GOLD)
+
+Lazy evaluation
+
+function* infinite() {
+  let i = 0;
+  while (true) yield i++;
+}
+
+
+Custom iterators
+
+Streaming data
+
+State machines
+
+Redux-saga
+
+Large dataset traversal
+
+Backtracking algorithms
+
+🔹 Generator states (INTERVIEW TRICK)
+State	Meaning
+suspended-start	Before first .next()
+suspended-yield	Paused at yield
+executing	Currently running
+completed	Finished
+🔹 Can generators throw errors?
+function* gen() {
+  try {
+    yield 1;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+const g = gen();
+g.next();
+g.throw("Error");
+
+
+✔ Errors propagate into generator.
+
+🔹 Generator vs Iterator (TRICK QUESTION)
+
+Generator: a function that creates iterators
+
+Iterator: object with .next()
+
+All generators are iterators
+Not all iterators are generators
+
+📌 CONCISE INTERVIEW NOTES (REVISION)
+
+function* defines generator
+
+yield pauses execution
+
+Returns { value, done }
+
+Execution controlled by .next()
+
+Generators retain state
+
+Lazy & memory efficient
+
+Iterable (for...of)
+
+yield* delegates
+
+Can receive values via .next(value)
+
+Not async by default
+
+Used in redux-saga, streaming, state machines
+
+Generator ≠ async/await
+
+🧠 One-liner interview answers
+
+What is a generator?
+→ A function that can pause and resume execution using yield.
+
+Why use generators?
+→ To implement lazy iteration and controlled execution.
+
+Difference between generator and async?
+→ Generators pause synchronously; async handles promises automatically.
