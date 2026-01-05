@@ -1,0 +1,228 @@
+WHAT IS A PROTOTYPE IN JS
+JavaScript is a prototype-based language. Every object has an internal hidden property called [[Prototype]] which points to another object. This is how inheritance and method sharing works in JS.
+
+When you access a property on an object:
+
+JS looks on the object itself
+
+If not found, it looks on the object's prototype
+
+This continues up the prototype chain
+
+Stops at Object.prototype → null
+
+[[PROTOTYPE]] VS proto VS prototype
+[[Prototype]]:
+
+Internal, not directly accessible
+
+Defined by the spec
+
+proto:
+
+Getter/setter for [[Prototype]]
+
+Exists on all objects
+
+obj.proto === Object.getPrototypeOf(obj)
+
+prototype:
+
+Property that exists ONLY on constructor functions
+
+Used when creating objects with new
+
+Determines what the instance’s [[Prototype]] will be
+
+Key rule:
+instance.proto === Constructor.prototype
+
+HOW new WORKS INTERNALLY
+When you do:
+const obj = new Foo(arg)
+
+JS does:
+
+Create empty object {}
+
+Set obj.proto = Foo.prototype
+
+Call Foo with this = obj
+
+Return obj (unless constructor returns an object)
+
+FUNCTION CONSTRUCTORS
+Example:
+function User(name) {
+this.name = name;
+}
+
+User.prototype.sayHi = function() {
+return this.name;
+};
+
+Instance lookup:
+user → User.prototype → Object.prototype → null
+
+WHY METHODS GO ON prototype
+If methods are inside constructor:
+
+Each instance gets its own copy
+
+Memory waste
+
+If methods are on prototype:
+
+Shared by all instances
+
+Efficient and correct
+
+PROTOTYPE CHAIN
+Example:
+arr → Array.prototype → Object.prototype → null
+
+Everything in JS (except null) has a prototype chain.
+
+OBJECT.CREATE
+Object.create(proto) creates a new object whose [[Prototype]] is proto.
+
+Example:
+const obj = Object.create(Activity.prototype);
+
+This is the CORE building block for inheritance.
+
+CORRECT INHERITANCE PATTERN (FUNCTIONS)
+Parent:
+function Activity(a) {
+this.amount = a;
+}
+Activity.prototype.getAmount = function() {
+return this.amount;
+};
+
+Child:
+function Payment(a, r) {
+Activity.call(this, a);
+this.receiver = r;
+}
+
+Payment.prototype = Object.create(Activity.prototype);
+Payment.prototype.constructor = Payment;
+
+This creates:
+paymentObj
+→ Payment.prototype
+→ Activity.prototype
+→ Object.prototype
+
+WHY Parent.call(this) IS REQUIRED
+It copies instance properties from Parent to Child.
+Without it:
+
+Child instances won't have parent state
+
+Only methods are inherited, not data
+
+COMMON MISTAKE: Object.setPrototypeOf(Child, Parent)
+Object.setPrototypeOf(Payment, Activity)
+
+This links:
+Payment → Activity (functions)
+
+But instances use:
+paymentObj → Payment.prototype → Object.prototype
+
+Activity.prototype is never reached.
+This is NOT inheritance for instances.
+
+WHEN Object.setPrototypeOf IS VALID
+Correct (but discouraged):
+Object.setPrototypeOf(Child.prototype, Parent.prototype)
+
+This works but:
+
+Slower
+
+Less readable
+
+Avoid in production
+
+Preferred:
+Child.prototype = Object.create(Parent.prototype)
+
+instanceof OPERATOR
+obj instanceof Constructor
+
+Checks whether Constructor.prototype exists in obj’s prototype chain.
+
+Example:
+paymentObj instanceof Payment → true
+paymentObj instanceof Activity → true
+
+hasOwnProperty
+obj.hasOwnProperty(prop)
+
+Checks ONLY own properties
+
+Does NOT check prototype chain
+
+Used to distinguish:
+own data vs inherited methods
+
+METHOD LOOKUP ORDER
+obj.method()
+
+obj.method
+
+obj.proto.method
+
+obj.proto.proto.method
+
+Object.prototype.method
+
+null → error
+
+FUNCTIONS ARE OBJECTS
+Functions also have prototypes:
+fn → Function.prototype → Object.prototype → null
+
+So:
+Function instanceof Object → true
+Object instanceof Function → true
+
+CLASS SYNTAX IS JUST SYNTAX SUGAR
+class Payment extends Activity {}
+
+Internally becomes:
+
+Prototype linking
+
+super() calls Parent.call(this)
+
+Same prototype chain as function constructors
+
+No new inheritance model introduced.
+
+WHY PROTOTYPES MATTER IN INTERVIEWS
+Used to test:
+
+JS fundamentals
+
+Memory efficiency
+
+Understanding of inheritance
+
+Debugging broken class hierarchies
+
+Common interview tasks:
+
+Fix broken inheritance
+
+Predict output
+
+Explain prototype chain
+
+Implement inheritance without class
+
+ONE-LINE INTERVIEW SUMMARY
+JavaScript uses prototype chains for inheritance; objects delegate property access to their prototypes, and correct inheritance links Child.prototype to Parent.prototype.
