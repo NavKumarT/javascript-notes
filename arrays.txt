@@ -1,0 +1,50 @@
+AVASCRIPT ARRAYS: THE MASTER STUDY SHEET
+Arrays in JavaScript are specialized objects used for storing sequences of values. They use zero-based indexing, meaning the first element is at index 0 and the last is at array.length - 1.
+
+--------------------------------------------------------------------------------
+1. CORE PROPERTIES & IDENTIFICATION
+• .length: Returns the number of elements in the array.
+• typeof: Evaluating typeof [] produces "object", as arrays are specialized objects.
+• instanceof: Use myArray instanceof Array to identify if an object is an array.
+
+--------------------------------------------------------------------------------
+2. MUTATING METHODS (Modifies the Original Array)
+These methods change the "internal state" of the existing array.
+• .push(value): Adds one or more elements to the end of the array.
+• .pop(): Removes and returns the last element.
+• .unshift(value): Adds one or more elements to the front.
+• .shift(): Removes and returns the first element.
+• .reverse(): Inverts the order of elements in place.
+• .fill(value): Fills all or part of the array with a specific value.
+
+--------------------------------------------------------------------------------
+3. NON-MUTATING METHODS (Returns a New Value/Array)
+These methods are often preferred in functional programming as they do not damage the original data [14, 561; 6, 362].
+• .slice(start, end): Returns a copy of a segment. The start is inclusive, and end is exclusive. Calling .slice() with no arguments creates a full shallow copy.
+• .concat(otherArray): Appends arrays or values together to produce a new combined array.
+• .map(transformFunc): Transforms every element by applying a function, returning a new array of the same length.
+• .filter(testFunc): Returns a new array containing only the elements that pass the predicate test.
+• .join(separator): Glues all elements into a single string using the provided separator.
+• .reduce(combineFunc, start): Folds all elements into a single value (e.g., a sum).
+
+--------------------------------------------------------------------------------
+4. SEARCH & UTILITY METHODS
+• .indexOf(value): Searches from start to end; returns the first index found or -1 if absent.
+• .lastIndexOf(value): Searches from end to start.
+• .includes(value): Returns a Boolean indicating if the value exists in the array.
+• .find(testFunc): Returns the first element that passes the test, or undefined if none match.
+• .some(testFunc): Returns true if any element passes the test.
+• .every(testFunc): Returns true only if all elements pass the test.
+• .forEach(actionFunc): Iterates over elements to perform side effects (like logging); it does not return a value.
+
+--------------------------------------------------------------------------------
+5. IMPORTANT INTERVIEW "GOTCHAS"
+• Identity Check: Comparing two different arrays with == or === checks for identity, not content. [] == [] is always false because they are two distinct objects.
+• const Mutability: Declaring an array with const prevents reassigning the binding to a new array, but it does not prevent you from changing the contents of that array (e.g., using .push()).
+• Sparse Arrays/Missing Args: If you pass fewer arguments than a function expects, the missing parameters are assigned undefined.
+• Array-Like Objects: Many browser structures (like childNodes or arguments) are "array-like" but are not real arrays; they lack methods like .slice or .map unless converted via Array.from().
+• The Spread Operator (...): You can "spread" an array into a new one (e.g., [...oldArray, newItem]) to create a copy with additions without mutating the original.
+• Destructuring: You can "look inside" an array to bind its elements to names succinctly: let [first, second] =;. Attempting to destructure null or undefined will throw an error.
+
+--------------------------------------------------------------------------------
+Analogy for Memory: Think of an array as a long octopus. The tentacles are neatly labeled with numbers (indices). Mutating methods tell the octopus to grow or cut off a tentacle. Non-mutating methods tell a separate octopus to mimic the first one's shape but with a slight change.

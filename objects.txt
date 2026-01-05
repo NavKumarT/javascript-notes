@@ -1,0 +1,48 @@
+JavaScript Objects: The Master Study Sheet
+Objects in JavaScript are arbitrary collections of properties used to group values—including other objects—to build complex data structures.
+
+--------------------------------------------------------------------------------
+1. Core Concepts & Creation
+• Object Literals: Objects are typically created using braces {}. Inside, properties are written as name: value pairs.
+• Property Access:
+    ◦ Dot Notation (value.x): Fetches the property literally named "x". It only works with names that look like valid binding names.
+    ◦ Bracket Notation (value[x]): Evaluates the expression x and uses the result (converted to a string) as the property name. This is required for names that are numbers or contain spaces.
+• Shorthand: If an object property name is not followed by a value, its value is taken from a binding with the same name (e.g., {events} is shorthand for {events: events}).
+
+--------------------------------------------------------------------------------
+2. Basic Operations
+• in operator: A binary operator that returns true if an object has a property with a specific name.
+• delete operator: A unary operator that cuts off a property from an object, removing it entirely.
+• Object.keys(obj): Returns an array of strings representing the object’s own property names.
+• Object.assign(target, source): Copies all properties from a source object into a target object.
+
+--------------------------------------------------------------------------------
+3. Mutability vs. Identity (Interview Essentials)
+• Mutability: Unlike numbers or strings (which are immutable), objects can be modified. You can change their properties, giving a single object different content over time.
+• Identity: Comparing objects with == or === checks for identity, not content. Two different objects are never equal, even if they have identical properties.
+• const with Objects: A const binding to an object cannot be reassigned to a new object, but the contents of that object can still change.
+
+--------------------------------------------------------------------------------
+4. Prototypes & Inheritance
+• The Prototype Chain: Almost all objects have a prototype, a fallback object used when a property is requested that the object doesn't have. The root of this chain is usually Object.prototype.
+• Object.create(proto): Creates a new object with a specific prototype.
+• Classes: The class keyword (introduced in 2015) provides a cleaner way to define a constructor and its prototype methods.
+• Inheritance: Using extends allows a subclass to inherit properties and behavior from a superclass. The super keyword is used to call the superclass's constructor or methods.
+
+--------------------------------------------------------------------------------
+5. Advanced Syntax & Methods
+• Methods: Properties that hold function values. When called as object.method(), the this binding inside the function points to that object.
+• Private Properties: Prefixing a name with # makes it private, meaning it is inaccessible from outside the class.
+• Getters & Setters: Methods marked with get or set that hide a method call behind a property access.
+• Optional Chaining (?.): Safely reads properties of potentially null or undefined objects without throwing an error.
+• Destructuring: A succinct way to "look inside" an object to bind its internal properties to local names (e.g., let {name} = {name: "Faraji"}).
+
+--------------------------------------------------------------------------------
+6. Important Interview "Gotchas"
+• typeof null: This produces "object" due to a historical accident in the language's design.
+• The Map Problem: Using a plain object as a map is dangerous because it inherits properties like toString from its prototype. Use the Map class or Object.create(null) for a clean key-value store.
+• Arrow Functions & this: Arrow functions do not have their own this binding; they see the this of the scope around them.
+• JSON Restrictions: JSON property names must be in double quotes, and it cannot store functions or non-data expressions.
+
+--------------------------------------------------------------------------------
+Analogy for Objects: Think of an object as an octopus with many tentacles. Each tentacle has a name (property) and grasps a value. You can cut a tentacle off with delete or grow a new one by assigning a value. Prototypes are like a "backdrop" or "shadow octopus" that stands behind the first one; if you look for a name the first octopus isn't holding, you look at the one in the back.
